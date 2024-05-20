@@ -55,7 +55,16 @@ any moderations they deem appropriate.
 
 ---
 
-TODO
+- Our online platform (website, forum, chatroom etc.)
+- Code repository (including comments, pull requests, issue reports etc.)
+- Project-related communication channels such as:
+  - Email
+  - Slack
+  - Microsoft Teams
+  - Discord
+  - Asana
+  - etc.
+- In-person events(Conferences, meetups etc.)
 
 ## Enforcement
 
