@@ -70,7 +70,7 @@ any moderations they deem appropriate.
 
 ---
 
-TODO
+Community leaders will take action to address violations of the Code of Conduct. The specific consequences will depend on the severity of the violation.
 
 ## Enforcement Guidelines
 
