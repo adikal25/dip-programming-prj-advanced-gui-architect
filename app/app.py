@@ -1,13 +1,15 @@
 import os.path
 import logging
 import shutil
+from threading import Thread
 from typing import Optional
 import utils
 import web_cli
 from extract_text import ExtractText
-from flask import Flask, render_template, request, send_file, redirect
+from flask import Flask, render_template, request, send_file, redirect, url_for
 import html
 import glob
+import pyttsx3
 
 # Initialise flask app
 app = Flask(__name__, static_url_path='/static', static_folder='static')
@@ -15,6 +17,8 @@ app = Flask(__name__, static_url_path='/static', static_folder='static')
 filename: Optional[str] = None
 # Flag to check if the search process should be canceled
 cancel_search_flag: bool = False
+
+engine = pyttsx3.init()
 
 
 @app.context_processor
@@ -168,7 +172,6 @@ def upload_video():
     """
     youtube_url = request.form.get("youtubeInput")
     file = request.files["localFileInput"]
-    # TODO: Move this into separate function, too messy to have this logic in route method
     if file:
         if not os.path.exists(f"{utils.get_vid_save_path()}"):
             os.makedirs(f"{utils.get_vid_save_path()}")
@@ -177,13 +180,13 @@ def upload_video():
         filename = file.filename
         file_hash = utils.hash_video_file(filename)
         if utils.file_already_exists(file_hash):
-            return redirect(f"/play_video/{filename}")
+            return redirect(url_for('auditory_feedback', next_page=f"/play_video/{filename}"))
         video_title = request.form.get("videoTitle")
         if video_title:
             utils.add_video_to_user_data(filename, video_title, file_hash)
         else:
             utils.add_video_to_user_data(filename, filename, file_hash)
-        return redirect(f"/play_video/{filename}")
+        return redirect(url_for('auditory_feedback', next_page=f"/play_video/{filename}"))
     elif youtube_url:
         return redirect(utils.download_youtube_video(youtube_url))
     logging.error("Failed to upload video file")
@@ -270,6 +273,28 @@ def update_tesseract_path():
 
     message = 'Could not find tesseract executable. Please enter the path manually.'
     return render_template('settings.html', current_settings=current_settings, message=message)
+
+
+def speak_text(text):
+    try:
+        logging.debug("Starting text-to-speech in a separate thread.")
+        engine.say(text)
+        engine.runAndWait()
+        logging.debug("Finished text-to-speech.")
+    except Exception as e:
+        logging.error(f"Error in text-to-speech: {e}")
+
+
+@app.route("/auditory_feedback")
+def auditory_feedback():
+    next_page = request.args.get('next_page', '/')
+    logging.debug(f"Next page to redirect: {next_page}")
+
+    # Start the text-to-speech in a separate thread
+    tts_thread = Thread(target=speak_text, args=("Your video is being processed. Please wait.",))
+    tts_thread.start()
+
+    return render_template("auditory_feedback.html", next_page=next_page)
 
 
 if __name__ == "__main__":
