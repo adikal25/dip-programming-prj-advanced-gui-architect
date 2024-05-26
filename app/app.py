@@ -301,6 +301,22 @@ def auditory_feedback():
     return render_template("auditory_feedback.html", next_page=next_page)
 
 
+@app.route("/update_progress")
+def update_progress():
+    progress = request.args.get('progress')
+    progress_message = {
+        "50": "50% completed.",
+        "100": "The video is ready."
+    }.get(progress, "Processing...")
+    logging.debug(f"Progress update: {progress_message}")
+
+    # Start the text-to-speech in a separate thread
+    tts_thread = Thread(target=speak_text, args=(progress_message,))
+    tts_thread.start()
+
+    return {"message": progress_message}
+
+
 if __name__ == "__main__":
     host = "localhost"
     port = 5000

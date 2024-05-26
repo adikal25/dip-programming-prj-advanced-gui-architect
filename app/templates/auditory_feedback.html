@@ -2,15 +2,36 @@
 {% set title = "Auditory Feedback" %}
 
 {% block content %}
-    <div class="m-8">
-        <h2 class="text-6xl font-bold text-center text-transparent bg-clip-text caret-pink-600
-                   bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400">Auditory Feedback</h2>
-        <p class="text-lg mt-4 text-center">Your video is being processed. Please wait.</p>
-    </div>
-    <script>
-        // Redirect after 5 seconds
-        setTimeout(function () {
-            window.location.href = "{{ next_page }}";
-        }, 5000);
-    </script>
+<div class="m-8">
+    <h2 class="text-6xl font-bold text-center text-transparent bg-clip-text caret-pink-600
+               bg-gradient-to-tr from-indigo-500 via-fuchsia-400 to-purple-400">Auditory Feedback</h2>
+    <p class="text-lg mt-4 text-center" id="progress-text">Your video is being processed. Please wait.</p>
+</div>
+<script>
+    const nextPage = "{{ next_page }}";
+
+    function updateProgress(progress, message) {
+        fetch(`/update_progress?progress=${progress}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('progress-text').innerText = data.message;
+            });
+    }
+
+
+    // 50% completed message at 7.5 seconds
+    setTimeout(() => {
+        updateProgress(50, "50% completed.");
+    }, 7500);
+
+    // Video ready message at 15 seconds
+    setTimeout(() => {
+        updateProgress(100, "The video is ready.");
+    }, 15000);
+
+    // Redirect after 15 seconds
+    setTimeout(function () {
+        window.location.href = nextPage;
+    }, 15000);
+</script>
 {% endblock %}
