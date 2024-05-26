@@ -2,7 +2,7 @@
 ### Mark all that applied this week
 - [x] Attended class
 - [ ] Responded to PRs/Issues
-- [ ] Met with the team online. Forum ______
+- [x] Met with the team online. Discord
 - [x] Committed to group repo
 
 ### Other
