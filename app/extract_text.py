@@ -77,13 +77,6 @@ class ExtractText:
     @staticmethod
     def openai_format_raw_ocr(extracted_text: str, language: str) -> str:
         """
-        "Given an input of potentially raw OCR capture from a video containing Python code, your task is to correct
-        and format the code. Ensure the code's indentation and syntax are accurate. Exclude any content that isn't
-        valid Python code. If no recognizable Python content is detected, return 'ERROR'. Do not provide
-        explanations, leading or trailing backticks, or specify the language in your response. Simply return the
-        corrected code. Avoid making extensive alterations; the goal is to retain the original intent of the capture
-        as closely as possible."
-
         prompt = f"Fix up the following {language} code snippet: '{extracted_text}'" response =
         openai.ChatCompletion.create( model="gpt-3.5-turbo", messages=[ {"role": "system", "content": "Given an input
         of potentially raw OCR capture from a video containing code, your task is to correct and format the code.
