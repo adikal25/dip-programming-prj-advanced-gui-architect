@@ -184,7 +184,7 @@ def process_text_file(input_file, output_file):
                     #             "trailing"
                     #             "backticks and do NOT return the language before the code snippet."},
                     {"role": "system",
-                      "content": f"You are a coding assistant. You reply only in programming code "
+                      "content": "You are a coding assistant. You reply only in programming code "
                                  "that is correct and formatted. Do NOT reply with any explanation, "
                                  f"only code. If you are given something that is not programming code, "
                                  "you must NOT include it in your response. Do NOT return leading or "
