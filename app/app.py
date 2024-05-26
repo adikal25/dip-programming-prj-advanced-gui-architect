@@ -6,7 +6,7 @@ from typing import Optional
 import utils
 import web_cli
 from extract_text import ExtractText
-from flask import Flask, render_template, request, send_file, redirect, url_for
+from flask import Flask, render_template, request, send_file, redirect, url_for, session
 import html
 import glob
 import pyttsx3
@@ -18,7 +18,9 @@ filename: Optional[str] = None
 # Flag to check if the search process should be canceled
 cancel_search_flag: bool = False
 
-engine = pyttsx3.init()
+# engine = pyttsx3.init()
+
+app.secret_key = 'architect'  # Set a secret key for session management
 
 
 @app.context_processor
@@ -178,6 +180,7 @@ def upload_video():
         file.save(f"{utils.get_vid_save_path()}" + file.filename)
         global filename
         filename = file.filename
+        session['filename'] = filename  # Store filename in session
         file_hash = utils.hash_video_file(filename)
         if utils.file_already_exists(file_hash):
             return redirect(url_for('auditory_feedback', next_page=f"/play_video/{filename}"))
@@ -278,6 +281,7 @@ def update_tesseract_path():
 def speak_text(text):
     try:
         logging.debug("Starting text-to-speech in a separate thread.")
+        engine = pyttsx3.init()
         engine.say(text)
         engine.runAndWait()
         logging.debug("Finished text-to-speech.")
