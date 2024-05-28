@@ -158,6 +158,29 @@ def process_code_file(input_filename, output_filename):
         for valid_line in valid_lines:
             outfile.write(valid_line + '\n')
 
+
+def remove_duplicate_lines(input_file, output_file):
+    try:
+        with open(input_file, 'r') as file:
+            lines = file.readlines()
+
+        # Remove duplicate lines while preserving the order
+        seen = set()
+        unique_lines = []
+        for line in lines:
+            if line not in seen:
+                unique_lines.append(line)
+                seen.add(line)
+
+        # Write the unique lines to the output file
+        with open(output_file, 'w') as file:
+            file.writelines(unique_lines)
+
+    except FileNotFoundError:
+        print(f"The file {input_file} does not exist.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 def process_text_file(input_file, output_file):
     with open(input_file, 'r') as file:
         text = file.read()
@@ -180,9 +203,9 @@ def process_text_file(input_file, output_file):
                     #             "trailing"
                     #             "backticks and do NOT return the language before the code snippet."},
                     {"role": "system",
-                      "content": f"You are a coding assistant. You reply only in programming code "
+                      "content": "You are a coding assistant. You reply only in programming code "
                                  "that is correct and formatted. Do NOT reply with any explanation, "
-                                 f"only code. If you are given something that is not programming code, "
+                                 "only code. If you are given something that is not programming code, "
                                  "you must NOT include it in your response. Do NOT return leading or "
                                  "trailing "
                                  "backticks and do NOT return the language before the code snippet."},
@@ -211,6 +234,7 @@ if __name__ == '__main__':
     output_dir = 'frames_with_code'
     raw_code_file = 'extracted_code.txt'
     valid_code_file = 'valid_code.txt'
+    clean_code_file = 'clean_code.txt'
     gpt_output_file = "gpt_output.txt"
 
     frames_with_code = process_video(video_path)
@@ -219,6 +243,8 @@ if __name__ == '__main__':
 
     process_code_file(raw_code_file, valid_code_file)
 
-    process_text_file(valid_code_file, gpt_output_file)
+    remove_duplicate_lines(valid_code_file, clean_code_file)
+
+    process_text_file(clean_code_file, gpt_output_file)
 
     print(f"Code-containing frames extraction complete. Check '{output_dir}' for the output images. Check '{gpt_output_file}' for the output file.")
