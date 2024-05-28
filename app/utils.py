@@ -97,7 +97,6 @@ def read_user_data() -> Optional[Mapping[str, Any]]:
     try:
         with path.open("r") as user_data_json:
             data = json.load(user_data_json)
-            print(data)
             return data
     except JSONDecodeError:
         logging.error("Failed to read data from userdata.json, file may be empty.")
