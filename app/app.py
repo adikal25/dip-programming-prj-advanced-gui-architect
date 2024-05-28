@@ -174,13 +174,18 @@ def upload_video():
     """
     youtube_url = request.form.get("youtubeInput")
     file = request.files["localFileInput"]
+    if youtube_url:
+        return redirect(url_for("auditory_feedback", next_page="/"))
+
     if file:
         if not os.path.exists(f"{utils.get_vid_save_path()}"):
             os.makedirs(f"{utils.get_vid_save_path()}")
         file.save(f"{utils.get_vid_save_path()}" + file.filename)
+
         global filename
         filename = file.filename
         session['filename'] = filename  # Store filename in session
+
         file_hash = utils.hash_video_file(filename)
         if utils.file_already_exists(file_hash):
             return redirect(url_for('auditory_feedback', next_page=f"/play_video/{filename}"))
@@ -190,8 +195,8 @@ def upload_video():
         else:
             utils.add_video_to_user_data(filename, filename, file_hash)
         return redirect(url_for('auditory_feedback', next_page=f"/play_video/{filename}"))
-    elif youtube_url:
-        return redirect(utils.download_youtube_video(youtube_url))
+    # elif youtube_url:
+    #     return redirect(utils.download_youtube_video(youtube_url))
     logging.error("Failed to upload video file")
     return redirect("/upload")
 
@@ -279,6 +284,7 @@ def update_tesseract_path():
 
 
 def speak_text(text):
+
     try:
         logging.debug("Starting text-to-speech in a separate thread.")
         engine = pyttsx3.init()

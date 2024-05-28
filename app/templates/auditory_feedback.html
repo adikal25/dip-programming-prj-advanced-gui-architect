@@ -10,7 +10,7 @@
 <script>
     const nextPage = "{{ next_page }}";
 
-    function updateProgress(progress, message) {
+    function updateProgress(progress) {
         fetch(`/update_progress?progress=${progress}`)
             .then(response => response.json())
             .then(data => {
