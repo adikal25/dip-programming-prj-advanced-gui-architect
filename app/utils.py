@@ -7,7 +7,8 @@ import logging
 import time
 import cv2
 from json import JSONDecodeError
-from typing import Union, Optional
+from typing import Union, Optional, Mapping, Any
+from pathlib import Path
 import openai
 import pytesseract
 from pytube import YouTube
@@ -77,21 +78,26 @@ def format_timestamp(seconds: int) -> str:
     return f'{str(minutes).zfill(2)}:{str(remaining_seconds).zfill(2)}'
 
 
-def read_user_data() -> json:
+def read_user_data() -> Optional[Mapping[str, Any]]:
     """
     Reads the users data from json file
     :return: Returns user data as json
     """
-    if not os.path.exists("data\\userdata.json"):
-        if not os.path.exists("data\\"):
-            os.makedirs("data\\")
-        with open("data\\userdata.json", "w") as user_data:
+    path = Path("data/userdata.json")
+
+    if not path.exists():
+        if not path.parent.exists():
+            path.parent.mkdir()
+
+        with path.open("w") as user_data:
             user_data.write(json.dumps({"all_videos": []}))
             pass
+
         return None
     try:
-        with open("data\\userdata.json", "r") as user_data_json:
+        with path.open("r") as user_data_json:
             data = json.load(user_data_json)
+            print(data)
             return data
     except JSONDecodeError:
         logging.error("Failed to read data from userdata.json, file may be empty.")
