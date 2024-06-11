@@ -275,9 +275,8 @@ def update_tesseract_path():
 if __name__ == "__main__":
     host = "localhost"
     port = 5000
-    if os.name == 'posix': 
-        port = 5001  # or 5002 as needed
-    app.run(port=port)
+    if os.name == 'posix':
+        port = 5001
     logging.basicConfig(filename="app.log", filemode="w", level=logging.DEBUG, format="%(levelname)s - %(message)s")
     print("[*] Starting OcrRoo Server")
     print(f"[*] OcrRoo Server running on http://{host}:{port}/")
